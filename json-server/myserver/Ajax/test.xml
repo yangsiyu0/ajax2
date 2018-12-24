@@ -1,0 +1,10 @@
+<root>
+    <person>
+        <name>yangsi</name>
+        <age>20</age>
+    </person>
+    <person>
+        <name>fds</name>
+        <age>42</age>
+    </person>
+</root>

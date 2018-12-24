@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script charset="utf-8" type="text/javascript" src="js/ajax.js"></script>
+    <script charset="utf-8" type="text/javascript">
+        //->同步(sync)异步(async)编程
+        //->js是属于单线程的，我们最好使用异步编程
+        //->定时器都是异步编程的
+        //->事件绑定都是异步编程的
+        //->回调函数也可以理解为异步编程
+        //->在AJAX中可以使用异步编程
+        var count=0;
+        // window.setTimeout(function(){
+        //     count++;
+        //     console.log(count);
+        // },1000);
+        // console.log(count);//第一次输出的结果为0，第二次结果是1
+
+        //  window.setTimeout(function(){
+        //     count++;
+        //     console.log(count);
+        // },0);//->我们定时器的时间设置为0也不是立马执行，而是需要等待一段时间：谷歌5-6，ie10-13
+        // console.log(count);
+        // while(1){
+
+        // }
+        // //结果输出1次，结果为0，上述定时器没有输出的，我们定时器设定1000ms后执行，不一定到达时间就执行，如果当前浏览器的线程被占用（现在
+        // //是死循环）
+
+
+        // var count=0;
+        // window.setTimeout(function(){
+        //     console.log("A");
+        // },10);
+        // window.setTimeout(function(){
+        //     console.log("B");
+        // });
+
+        //->AJAX中的同步：当Ajax任务开始得时候直到ready STATE===4得时候任务才算结束，此时才可以处理其它的时候
+
+        //->Ajax中的异步：当Ajax任务开始的时候（send）,不需要等到READY STATE===4,我依然可以继续做其它的任务，并且只有当其它任务完成后，我们再看是否到达4，到达4的时候在做相关的操作
+
+        var xhr=new XMLHttpRequest;
+        //->绑定在open前可以输出1，绑定在open后则不输出1
+
+        // xhr.open("get","./node.txt",true);//此时状态由0变1，但是在这之前还没有绑定状态事件
+        // xhr.onreadystatechange=function(){
+        //     console.log(xhr.readyState);//输出2,3,4
+        // };
+        // xhr.send(null);//只有send之后，ajax向服务器发送请求的任务才开始
+
+        // xhr.onreadystatechange=function(){
+        //     console.log(xhr.readyState);//1234
+        // };
+        // xhr.open("get","./ajax.txt",true);
+        // xhr.send(null);
+
+        //上述是send表示Ajax开始，然后给xhr绑定一个事件，监听状态发生改变的时候，事件才执行，xhr.open一执行，状态就为1，此时状态由0变1，由于是异步，可以先执行上面的
+      
+       
+        // xhr.open("get","./ajax.txt",true);
+        // xhr.send(null);
+        // xhr.onreadystatechange=function(){
+        //     console.log(xhr.readyState);//234
+        // };
+          //创建一个对象为0，open后状态为1，send发送了表示ajax异步开始了，所以不用等着它ready state===4,我还可以执行其它任务；我在等待任务池中放了一个任务，当我状态发生
+        //改变的时候就会执行，由于我ajax执行send后，状态就由1发生改变
+
+
+        // xhr.open("get","./ajax.txt",false);
+        // xhr.send(null);//同步，当我readystate===4后才能执行其它操作，
+        // xhr.onreadystatechange=function(){
+        //     console.log(xhr.readyState);//状态无任何改变，这个事件不触发
+        // };
+
+        //->获取服务器时间
+        xhr.open("get","./ajax.txt",true);
+        xhr.setRequestHeader("zhufeng",'2016');//设置请求头信息，要在open之后设置
+        xhr.timeout="1000";//设置Ajax请求超时时间，为了防止请求时间太长
+        xhr.onreadystatechange=function(){
+            //console.log(xhr.readyState);
+            if(xhr.readyState===2){
+                // xhr.getResponseHeader//获取服务器响应头信息
+                var time=xhr.getResponseHeader("Date");
+                console.log(time);//输出格尼治时间
+                console.log(new Date(time));
+            }
+        };
+        xhr.send(null);
+
+        //在控制台timing中，Request sent表示发送请求；Wating表示服务器处理主体内容，Conetent Download等Waiting处理完才开始，这样很浪费时间，还记得淘宝的倒计时
+        //抢购么，我们是用客户端的时间去写的，如果我们任意修改客户端上的时间，就会导致结果不准。我们一般以服务器时间为准，但是用服务器的时候得注意，服务器从状态
+        //为4的时候开始得到，从我发送请求到服务器到我把时间拿出来，中间是不是有个时间差，哪怕只有10ms，也是需要时间的，说明客户端和服务器端的时间存在一个10ms差值
+        //时间差值越大，导致我的时间就越不准确，导致网速越快的人，抢的就快，网速慢，抢的就慢，作为前端，我们应该减少这种时间差，我们发现在状态为3和4的时候，
+        //时间是最长的，在2的时候耗时少点，所以我们在2的时候获取服务器，就获取时间
+       
+    </script>
+</body>
+</html>

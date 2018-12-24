@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        ~function () {
+            function ajax(options) {
+
+                let _default = {
+                    url: "",
+                    dataType: "json",
+                    type: "get",
+                    async: "true",
+                    data: null,
+                    getHead: null,
+                    success: null
+                };
+
+
+                for (let key in options) {
+                    if (options.hasOwnProperty(key)) {
+                        _default[key] = options[key];
+                    }
+                }
+
+                if (_default.type === "get") {
+                    _default.url.indexOf("?") >= 0 ? _default.url += "&" : _default.url += "?";
+                    _default.url += "_=" + Math.random();
+                }
+
+
+                let xhr = new XMLHttpRequest;
+                xhr.open(_default.type, _default.url, _default.async);
+                xhr.onreadystatechange = function () {
+                    if (/^2\d{2}$/.test(xhr.status)) {
+                        if (xhr.readyState === 2) {
+                            if (typeof _default.getHead === "function") {
+                                _default.getHead.call(xhr);
+                            }
+                        }
+                        if (xhr.readyState === 4) {
+                            var val = xhr.responseText;
+
+                            _default.success && _default.success.call(xhr, val);
+                        }
+                    }
+                };
+                xhr.send(_default.data);
+            }
+
+            window.ajax = ajax;
+        }();
+        ajax({
+            url: "data.txt",
+            type: "get",
+            dataType: "json",
+            async: true,
+            getHead: function () {
+
+            },
+            success: function (data) {
+                console.log(data);
+            }
+        });    
+    </script>
+</body>
+
+</html>
